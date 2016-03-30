@@ -33,10 +33,11 @@ public class MainScript : MonoBehaviour
    
     private void checkForTouchActions()
     {
-
+        //クリックした場所に爆弾を設置
         if (Input.GetMouseButton(0))
         {
             touchDown = true;
+            //設置する座標を取得
             RaycastHit hit;
             Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(mouseRay, out hit))
