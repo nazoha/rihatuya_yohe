@@ -97,7 +97,7 @@ public class Scissors : MonoBehaviour
                     {
                         movedirection = false;
                         Invoke("Start", 0.3f);
-                        print("ｙ座標="+ypos);
+                        //print("ｙ座標="+ypos);
 
                     }
                 
