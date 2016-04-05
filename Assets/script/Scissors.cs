@@ -30,7 +30,7 @@ public class Scissors : MonoBehaviour
             .Subscribe(_ =>
             {
                 Right();
-                print("終わり");
+                GameObject.Find("hasami").GetComponent<touchhair>().SentCutPos();
                 ypos= scissors.GetComponent<Transform>().position.y;
             }
             );
@@ -47,7 +47,7 @@ public class Scissors : MonoBehaviour
      
         timer += Time.deltaTime;
         var scissorspos = scissors.GetComponent<Transform>();
-        scissorspos.position = new Vector2(scissorspos.position.x, 2 + Mathf.PingPong((timer* speed), y - 2));
+        scissorspos.localPosition = new Vector2(scissorspos.localPosition.x, Mathf.PingPong((timer* speed), y));
     }
 
     //はさみを右に移動させるメソッド
@@ -72,13 +72,13 @@ public class Scissors : MonoBehaviour
                     if ((int)scissorspos.position.x == limitpos)
                     {
                         movedirection = true;
-                        Left();
+                    Invoke("Left", 0.5f);
+                        //Left();
                     }
 
             }
             );
     }
-    int i = 0;
 
     void Left()
     {
@@ -92,7 +92,6 @@ public class Scissors : MonoBehaviour
                     //scissorspos.position = new Vector2(speed * timer, scissorspos.position.y);
                    scissorspos.position = Vector2.Lerp(new Vector2(0, scissorspos.position.y), new Vector2(timer * speed, scissorspos.position.y), 1f);
 
-                    print("主家えじゃ");
                     if (scissorspos.position.x<=0f)
                     {
                         movedirection = false;

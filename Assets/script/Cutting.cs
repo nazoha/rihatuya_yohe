@@ -7,47 +7,57 @@ using UniRx.Triggers;
 public class Cutting : MonoBehaviour
 {
     public GameObject cuttinghair;
-
-    private GameObject hairpos
-    {
-        get { return _hairpos; }
-        set { _hairpos = GameObject.Find("customers/hair"); }
-    }
+    private GameObject hairpos;
+    //{
+    //    get { return _hairpos; }
+    //    set { _hairpos = GameObject.Find("customers/hair"); }
+    //}
     private GameObject _hairpos;
+    private float defaultScale;
     void Start()
     {
+        hairpos = GameObject.Find("customers/hair");
+        defaultScale = hairpos.transform.localPosition.y;
 
-
+    }
+    public void CutMain(float pos)
+    {
+        var scissorsPos = pos/0.65f;
         GameObject customers = GameObject.Find("customers");
+        var newhair = Instantiate(cuttinghair, new Vector2(-0.05f, 4.5f), Quaternion.identity) as GameObject;
+        newhair.transform.parent = customers.transform;
+        newhair.AddComponent<Rigidbody2D>();
 
-        var instance = this.UpdateAsObservable()
-            .Where(_ => Input.GetKeyDown(KeyCode.Space))
-            .FirstOrDefault();
-        instance
-            .Subscribe(_ => {
+        newhair.transform.localPosition = GameObject.Find("customers/hair").transform.localPosition;
 
-                var newhair = Instantiate(cuttinghair, new Vector2(-0.05f, 4.5f), Quaternion.identity) as GameObject;
-                newhair.transform.parent = customers.transform;
-                newhair.AddComponent<Rigidbody2D>();
-                
-                newhair.transform.localPosition = GameObject.Find("customers/hair").transform.localPosition;
+        GameObject oldhair = GameObject.Find("customers/hair");
+        var oldhairpos = oldhair.transform.localPosition.y;
+        newhair.transform.localPosition = new Vector2(oldhair.transform.localPosition.x, CutPos(scissorsPos));
+        newhair.transform.localScale = new Vector2(oldhair.transform.localScale.x, CutScale(scissorsPos));
+        //はさみが髪より低い場所だったら
+        if (scissorsPos < oldhairpos)
+        {
+            oldhair.transform.localScale = new Vector2(oldhair.transform.localScale.x, scissorsPos);
+        }
 
-                GameObject oldhair = GameObject.Find("customers/hair");
-                
-                newhair.transform.localPosition = new Vector2(oldhair.transform.localPosition.x, CutPos(1f));
-                newhair.transform.localScale = new Vector2(oldhair.transform.localScale.x, CutScale(1f));
-                oldhair.transform.localScale = new Vector2(oldhair.transform.localScale.x, 1f);
-            });
+    }
+
+    float ResizedefPos(float ypos = 0)
+    {
+        float newScale = 0;
+        var sissors = GetComponent<Scissors>();
+
+        newScale = ypos / 0.65f;
+        print(newScale);
+        return newScale;
+
     }
 
     //切られたときの髪の長さ　吹っ飛ぶ方
     float CutScale(float ypos = 0)
     {
-        GameObject hairpos = GameObject.Find("customers/hair");
 
-        print("hairpos.transform.lossyScale.y=" + hairpos.transform.localScale.y);
         var scale = hairpos.transform.localScale.y - ypos;
-        print("scale="+scale+ "hairpos.transform.localScale.y="+ hairpos.transform.localScale.y+ "ypos="+ ypos);
         if (scale < 0)
         {
             scale = 0;
@@ -55,10 +65,9 @@ public class Cutting : MonoBehaviour
         return scale;
     }
 
-    //吹っ飛ばされない髪の法
+    //カットされた髪の座標
     float CutPos(float ypos = 0)
     {
-        GameObject hairpos = GameObject.Find("customers/hair");
         var scale = ypos + hairpos.transform.localPosition.y;
         if (scale < 0)
         {
@@ -66,4 +75,5 @@ public class Cutting : MonoBehaviour
         }
         return scale;
     }
+
 }
