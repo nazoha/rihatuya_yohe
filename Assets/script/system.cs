@@ -39,8 +39,6 @@ public class system : MonoBehaviour
             .Subscribe(_ => UpandDownScissors());
 
 
-        var upmousebutton = this.UpdateAsObservable()
-            .Where(_ => Input.GetMouseButtonUp(0));
     }
 
     //はさみの上下に関するメソッド
@@ -69,7 +67,6 @@ public class system : MonoBehaviour
                     timer += Time.deltaTime;
                     //scissorspos.position = new Vector2(Mathf.PingPong(timer * speed,y-2), scissorspos.position.y);
                     scissorspos.position = Vector2.Lerp(new Vector2(0, scissorspos.position.y), new Vector2(timer * speed, scissorspos.position.y), 1f);
-                    print("aaaaa");
                     if ((int)scissorspos.position.x == limitpos)
                     {
                         movedirection = true;

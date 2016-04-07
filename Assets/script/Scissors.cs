@@ -14,15 +14,19 @@ public class Scissors : MonoBehaviour
     private float limitpos = 3f;
     IObservable<Unit> moverleft;
     IObservable<Unit> rightmove;
-    float ypos;
+    //はさみを右に移動させるメソッド
+    float timer = 0;
+    bool movedirection = false;
+    Transform scissorspos;
 
     void Awake()
     {
         scissors = GameObject.Find("hasami");
-        ypos = 2;
+        
     }
     void Start()
     {
+        scissorspos = scissors.GetComponent<Transform>();
         //マウスの右移動
         rightmove = this.UpdateAsObservable()
              .FirstOrDefault(_ => Input.GetMouseButtonDown(0));
@@ -31,7 +35,6 @@ public class Scissors : MonoBehaviour
             {
                 Right();
                 GameObject.Find("hasami").GetComponent<touchhair>().SentCutPos();
-                ypos= scissors.GetComponent<Transform>().position.y;
             }
             );
         //マウスの上下移動 1クリックしたらupanddonwscissorsを終了させる
@@ -50,13 +53,11 @@ public class Scissors : MonoBehaviour
         scissorspos.localPosition = new Vector2(scissorspos.localPosition.x, Mathf.PingPong((timer* speed), y));
     }
 
-    //はさみを右に移動させるメソッド
-    float timer = 0;
-    bool movedirection = false;
+
     void Right()
     {
         timer = 0;
-        var scissorspos = scissors.GetComponent<Transform>();
+        //var scissorspos = scissors.GetComponent<Transform>();
         var moveright = this.UpdateAsObservable()
 
         .TakeWhile(_=>!movedirection);
@@ -82,21 +83,18 @@ public class Scissors : MonoBehaviour
 
     void Left()
     {
-        var scissorspos = scissors.GetComponent<Transform>();
         moverleft = this.UpdateAsObservable()
             .TakeWhile(_ => movedirection); 
         moverleft
             .Subscribe(_ =>
             {
                     timer -= Time.deltaTime;
-                    //scissorspos.position = new Vector2(speed * timer, scissorspos.position.y);
                    scissorspos.position = Vector2.Lerp(new Vector2(0, scissorspos.position.y), new Vector2(timer * speed, scissorspos.position.y), 1f);
 
                     if (scissorspos.position.x<=0f)
                     {
                         movedirection = false;
                         Invoke("Start", 0.3f);
-                        //print("ｙ座標="+ypos);
 
                     }
                 

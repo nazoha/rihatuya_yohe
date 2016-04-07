@@ -13,15 +13,14 @@ public class Cutting : MonoBehaviour
     //    set { _hairpos = GameObject.Find("customers/hair"); }
     //}
     private GameObject _hairpos;
-    private float defaultScale;
     void Start()
     {
         hairpos = GameObject.Find("customers/hair");
-        defaultScale = hairpos.transform.localPosition.y;
 
     }
     public void CutMain(float pos)
     {
+        hairpos = GameObject.Find("customers/hair");
         var scissorsPos = pos/0.65f;
         GameObject customers = GameObject.Find("customers");
         var newhair = Instantiate(cuttinghair, new Vector2(-0.05f, 4.5f), Quaternion.identity) as GameObject;
@@ -45,7 +44,6 @@ public class Cutting : MonoBehaviour
     float ResizedefPos(float ypos = 0)
     {
         float newScale = 0;
-        var sissors = GetComponent<Scissors>();
 
         newScale = ypos / 0.65f;
         print(newScale);
