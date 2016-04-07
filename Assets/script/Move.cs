@@ -20,7 +20,7 @@ public class Move : MonoBehaviour {
         Application.targetFrameRate = 60;
 
 	}
-    void Customer()
+   public void Customer()
     {
         float timer = 0;
         var customer = GameObject.Find("customers");

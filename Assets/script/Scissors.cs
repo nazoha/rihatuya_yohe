@@ -22,7 +22,7 @@ public class Scissors : MonoBehaviour
     void Awake()
     {
         scissors = GameObject.Find("hasami");
-        
+
     }
     void Start()
     {
@@ -47,10 +47,10 @@ public class Scissors : MonoBehaviour
     //はさみの上下に関するメソッド
     void UpandDown()
     {
-     
+
         timer += Time.deltaTime;
         var scissorspos = scissors.GetComponent<Transform>();
-        scissorspos.localPosition = new Vector2(scissorspos.localPosition.x, Mathf.PingPong((timer* speed), y));
+        scissorspos.localPosition = new Vector2(scissorspos.localPosition.x, Mathf.PingPong((timer * speed), y));
     }
 
 
@@ -60,22 +60,22 @@ public class Scissors : MonoBehaviour
         //var scissorspos = scissors.GetComponent<Transform>();
         var moveright = this.UpdateAsObservable()
 
-        .TakeWhile(_=>!movedirection);
+        .TakeWhile(_ => !movedirection);
         //.Where(x => (int)scissorspos.position.x < limitpos);
 
         moveright
             .Subscribe(move =>
             {
-                    //時間ごとに更新
-                    timer += Time.deltaTime;
-                    //scissorspos.position = new Vector2(Mathf.PingPong(timer * speed,y-2), scissorspos.position.y);
-                    scissorspos.position = Vector2.Lerp(new Vector2(0, scissorspos.position.y), new Vector2(timer * speed, scissorspos.position.y), 1f);
-                    if ((int)scissorspos.position.x == limitpos)
-                    {
-                        movedirection = true;
-                    Invoke("Left", 0.5f);
-                        //Left();
-                    }
+                //時間ごとに更新
+                timer += Time.deltaTime;
+                //scissorspos.position = new Vector2(Mathf.PingPong(timer * speed,y-2), scissorspos.position.y);
+                scissorspos.position = Vector2.Lerp(new Vector2(0, scissorspos.position.y), new Vector2(timer * speed, scissorspos.position.y), 1f);
+                if ((int)scissorspos.position.x == limitpos)
+                {
+                    movedirection = true;
+                    Invoke("Left", 0.3f);
+                    //Left();
+                }
 
             }
             );
@@ -84,21 +84,28 @@ public class Scissors : MonoBehaviour
     void Left()
     {
         moverleft = this.UpdateAsObservable()
-            .TakeWhile(_ => movedirection); 
+            .TakeWhile(_ => movedirection);
         moverleft
             .Subscribe(_ =>
             {
-                    timer -= Time.deltaTime;
-                   scissorspos.position = Vector2.Lerp(new Vector2(0, scissorspos.position.y), new Vector2(timer * speed, scissorspos.position.y), 1f);
+                timer -= Time.deltaTime;
+                scissorspos.position = Vector2.Lerp(new Vector2(0, scissorspos.position.y), new Vector2(timer * speed, scissorspos.position.y), 1f);
 
-                    if (scissorspos.position.x<=0f)
-                    {
-                        movedirection = false;
-                        Invoke("Start", 0.3f);
+                if (scissorspos.position.x <= 0f)
+                {
+                    movedirection = false;
+                    Invoke("Start", 0.3f);
 
-                    }
-                
+
+                    Invoke("callMove", 0.3f);
+                }
+
             });
+    }
+    void callMove()
+    {
+        var move = this.GetComponent<Move>();
+        move.Customer();
     }
 
 }
